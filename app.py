@@ -57,7 +57,8 @@ def get_llm(custom_key: Optional[str] = None) -> LLM:
     return LLM(
         model="gemini/gemini-3.1-flash-lite-preview",
         api_key=api_key,
-        temperature=0.3
+        temperature=0.3,
+        num_retries=3
     )
 
 # -----------------------------------------------------------------------------
@@ -321,22 +322,19 @@ def run_agent3(request: MeetingNotesRequest, x_gemini_api_key: Optional[str] = H
         t_summary = Task(
             description=f"Write a concise 5-line executive summary of this transcript:\n\n{request.transcript}",
             expected_output="An exact 5-line executive summary.",
-            agent=summarizer,
-            async_execution=True
+            agent=summarizer
         )
 
         t_actions = Task(
             description=f"Extract all action items from this transcript. Include Owner, Task, and Due Date:\n\n{request.transcript}",
             expected_output="A bulleted list of action items formatted as: - [ ] Task | Owner: Name | Due: Date",
-            agent=action_finder,
-            async_execution=True
+            agent=action_finder
         )
 
         t_decisions = Task(
             description=f"List all explicit decisions agreed upon in this transcript:\n\n{request.transcript}",
             expected_output="A bulleted list of key decisions made.",
-            agent=decision_logger,
-            async_execution=True
+            agent=decision_logger
         )
 
         t_format = Task(
